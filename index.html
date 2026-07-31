@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Анкета USpeak School</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg-color: var(--tg-theme-bg-color, #ffffff);
+      --text-color: var(--tg-theme-text-color, #222222);
+      --hint-color: var(--tg-theme-hint-color, #707579);
+      --btn-color: var(--tg-theme-button-color, #3390ec);
+      --btn-text-color: var(--tg-theme-button-text-color, #ffffff);
+      --sec-bg: var(--tg-theme-secondary-bg-color, #f4f4f5);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      padding: 16px;
+      margin: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      box-sizing: border-box;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 6px;
+      font-size: 22px;
+      text-align: center;
+    }
+
+    p.subtitle {
+      text-align: center;
+      color: var(--hint-color);
+      font-size: 14px;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-sizing: border-box;
+      font-size: 15px;
+      background-color: var(--sec-bg);
+      color: var(--text-color);
+      outline: none;
+    }
+
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23707579' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    button.submit-btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 24px;
+      margin-bottom: 20px;
+      background-color: var(--btn-color);
+      color: var(--btn-text-color);
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    button.submit-btn:active {
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🎓 Анкета USpeak</h2>
+  <p class="subtitle">Заповніть анкету для підбору ідеального курсу</p>
+
+  <form id="quizForm">
+    <!-- КОНТАКТИ -->
+    <div class="form-group">
+      <label for="name">Ваше ім'я *</label>
+      <input type="text" id="name" placeholder="Іван Іванов" required>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Ваш Email *</label>
+      <input type="email" id="email" placeholder="ivan@gmail.com" required>
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Ваш номер телефону *</label>
+      <input type="tel" id="phone" placeholder="+380..." required>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid var(--sec-bg); margin: 20px 0;">
+
+    <!-- ОПИТУВАННЯ -->
+    <div class="form-group">
+      <label for="targetAudience">1. Для кого потрібно підібрати курс? *</label>
+      <select id="targetAudience" required>
+        <option value="" disabled selected>Оберіть варіант...</option>
+        <option value="Для дитини">Для дитини</option>
+        <option value="Для підлітка">Для підлітка</option>
+        <option value="Для дорослого">Для дорослого</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="language">2. Яку мову бажаєте вивчати? *</label>
+      <select id="language" required>
+        <option value="" disabled selected>Оберіть мову...</option>
+        <option value="Англійська">Англійська</option>
+        <option value="Німецька">Німецька</option>
+        <option value="Французька">Французька</option>
+        <option value="Іспанська">Іспанська</option>
+        <option value="Японська">Японська</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="studentAge">3. Який вік учня? *</label>
+      <select id="studentAge" required>
+        <option value="" disabled selected>Оберіть вік...</option>
+        <option value="5–7 років">5–7 років</option>
+        <option value="8–10 років">8–10 років</option>
+        <option value="11–14 років">11–14 років</option>
+        <option value="15–17 років">15–17 років</option>
+        <option value="18+">18+</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="goal">4. Яка основна мета навчання? *</label>
+      <select id="goal" required>
+        <option value="" disabled selected>Оберіть мету...</option>
+        <option value="Загальна іноземна мова">Загальна іноземна мова</option>
+        <option value="Покращення розмовної мови">Покращення розмовної мови</option>
+        <option value="Підготовка до НМТ">Підготовка до НМТ</option>
+        <option value="Підготовка до міжнародних іспитів">Підготовка до міжнародних іспитів</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="knowsLevel">5. Чи знаєте свій рівень? *</label>
+      <select id="knowsLevel" onchange="toggleLevelSelect()" required>
+        <option value="" disabled selected>Оберіть варіант...</option>
+        <option value="Так">Так</option>
+        <option value="Ні, хочу пройти тест">Ні, хочу пройти тест</option>
+      </select>
+    </div>
+
+    <!-- ДИНАМІЧНЕ ПОЛЕ ДЛЯ РІВНЯ (З'ЯВЛЯЄТЬСЯ ЯКЩО "ТАК") -->
+    <div class="form-group hidden" id="levelContainer">
+      <label for="level">Оберіть ваш рівень:</label>
+      <select id="level">
+        <option value="" disabled selected>Оберіть рівень...</option>
+        <option value="Beginner">Beginner</option>
+        <option value="Elementary">Elementary</option>
+        <option value="Pre-Intermediate">Pre-Intermediate</option>
+        <option value="Intermediate">Intermediate</option>
+        <option value="Upper-Intermediate">Upper-Intermediate</option>
+        <option value="Advanced">Advanced</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="format">6. Який формат навчання вам підходить? *</label>
+      <select id="format" required>
+        <option value="" disabled selected>Оберіть формат...</option>
+        <option value="Міні-група до 5 учнів">Міні-група до 5 учнів</option>
+        <option value="Велика група до 12 учнів">Велика група до 12 учнів</option>
+        <option value="Індивідуальні заняття">Індивідуальні заняття</option>
+      </select>
+    </div>
+
+    <button type="button" class="submit-btn" onclick="sendData()">Надіслати анкету</button>
+  </form>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // Розгортаємо форму у Telegram
+
+    // Функція показу/приховування вибору рівня
+    function toggleLevelSelect() {
+      const knowsLevel = document.getElementById('knowsLevel').value;
+      const levelContainer = document.getElementById('levelContainer');
+      
+      if (knowsLevel === 'Так') {
+        levelContainer.classList.remove('hidden');
+      } else {
+        levelContainer.classList.add('hidden');
+        document.getElementById('level').value = '';
+      }
+    }
+
+    // Відправка даних у бот
+    function sendData() {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const targetAudience = document.getElementById('targetAudience').value;
+      const language = document.getElementById('language').value;
+      const studentAge = document.getElementById('studentAge').value;
+      const goal = document.getElementById('goal').value;
+      const knowsLevel = document.getElementById('knowsLevel').value;
+      const level = document.getElementById('level').value;
+      const format = document.getElementById('format').value;
+
+      // Базова перевірка заповнення
+      if (!name || !email || !phone || !targetAudience || !language || !studentAge || !goal || !knowsLevel || !format) {
+        alert("Будь ласка, заповніть усі обов'язкові поля!");
+        return;
+      }
+
+      if (knowsLevel === 'Так' && !level) {
+        alert("Будь ласка, вкажіть ваш рівень мови!");
+        return;
+      }
+
+      // Формуємо об'єкт із відповідями
+      const formData = {
+        name: name,
+        email: email,
+        phone: phone,
+        targetAudience: targetAudience,
+        language: language,
+        studentAge: studentAge,
+        goal: goal,
+        knowsLevel: knowsLevel,
+        level: knowsLevel === 'Так' ? level : 'Потрібен тест',
+        format: format
+      };
+
+      // Надсилаємо JSON назад у Telegram
+      tg.sendData(JSON.stringify(formData));
+    }
+  </script>
+</body>
+</html>
