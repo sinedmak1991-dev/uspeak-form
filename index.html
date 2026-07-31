@@ -208,12 +208,17 @@
   </form>
 
   <script>
-    const tg = window.Telegram.WebApp;
+    const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.expand();
     }
 
-    // Функція показу/приховування вибору рівня
+    // ⚠️ ВАЖЛИВО: Замініть цей URL на Production URL з вашої ноди Webhook у n8n
+    const WEBHOOK_URL = 'https://rehydrate-expenses-issuing.ngrok-free.dev/webhook-test/uspeak-form';
+    
+    // ⚠️ ВАЖЛИВО: Секретний ключ для захисту від спаму (має збігатися з ключем в n8n)
+    const SECRET_KEY = 'USpeak_Secret_Key_1296_s66';
+
     function toggleLevelSelect() {
       const knowsLevel = document.getElementById('knowsLevel').value;
       const levelContainer = document.getElementById('levelContainer');
@@ -226,8 +231,7 @@
       }
     }
 
-    // Відправка даних у бот
-    function sendData() {
+    async function sendData() {
       try {
         const name = document.getElementById('name').value.trim();
         const email = document.getElementById('email').value.trim();
@@ -240,7 +244,7 @@
         const level = document.getElementById('level').value;
         const format = document.getElementById('format').value;
 
-        // Перевірка обов'язкових полів
+        // Перевірка заповнення обов'язкових полів
         if (!name || !email || !phone || !targetAudience || !language || !studentAge || !goal || !knowsLevel || !format) {
           alert("Будь ласка, заповніть усі поля зі зірочкою (*)");
           return;
@@ -251,7 +255,10 @@
           return;
         }
 
+        // Збір даних анкетного пакета
         const formData = {
+          telegram_user_id: tg?.initDataUnsafe?.user?.id || null,
+          telegram_username: tg?.initDataUnsafe?.user?.username || '',
           name: name,
           email: email,
           phone: phone,
@@ -264,12 +271,25 @@
           format: format
         };
 
-        // Безпечна відправка даних через Telegram SDK
-        if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.sendData === 'function') {
-          window.Telegram.WebApp.sendData(JSON.stringify(formData));
+        // Захищена відправка на Webhook в n8n
+        const response = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'X-USpeak-Token': SECRET_KEY
+          },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          alert("Дякуємо! Анкету успішно відправлено.");
+          if (tg && typeof tg.close === 'function') {
+            tg.close(); // Закриваємо вікно Telegram WebApp
+          }
         } else {
-          alert("Увага: Telegram WebApp SDK не знайдено або форму відкрито поза Telegram Mini App.");
+          alert("Помилка під час збереження даних. Перевірте з'єднання.");
         }
+
       } catch (err) {
         alert("Помилка відправки: " + err.message);
       }
