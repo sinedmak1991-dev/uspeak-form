@@ -160,10 +160,14 @@
       <label for="goal">4. Яка основна мета навчання? *</label>
       <select id="goal" required>
         <option value="" disabled selected>Оберіть мету...</option>
-        <option value="Загальна іноземна мова">Загальна іноземна мова</option>
+        <option value="Загальна англійська/іноземна мова">Загальна іноземна мова</option>
         <option value="Покращення розмовної мови">Покращення розмовної мови</option>
         <option value="Підготовка до НМТ">Підготовка до НМТ</option>
         <option value="Підготовка до міжнародних іспитів">Підготовка до міжнародних іспитів</option>
+        <option value="Для подорожей">Для подорожей</option>
+        <option value="Для роботи">Для роботи</option>
+        <option value="Для навчання за кордоном">Для навчання за кордоном</option>
+        <option value="Для себе">Для себе</option>
       </select>
     </div>
 
@@ -222,44 +226,51 @@
 
     // Відправка даних у бот
     function sendData() {
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const targetAudience = document.getElementById('targetAudience').value;
-      const language = document.getElementById('language').value;
-      const studentAge = document.getElementById('studentAge').value;
-      const goal = document.getElementById('goal').value;
-      const knowsLevel = document.getElementById('knowsLevel').value;
-      const level = document.getElementById('level').value;
-      const format = document.getElementById('format').value;
+      try {
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const targetAudience = document.getElementById('targetAudience').value;
+        const language = document.getElementById('language').value;
+        const studentAge = document.getElementById('studentAge').value;
+        const goal = document.getElementById('goal').value;
+        const knowsLevel = document.getElementById('knowsLevel').value;
+        const level = document.getElementById('level').value;
+        const format = document.getElementById('format').value;
 
-      // Базова перевірка заповнення
-      if (!name || !email || !phone || !targetAudience || !language || !studentAge || !goal || !knowsLevel || !format) {
-        alert("Будь ласка, заповніть усі обов'язкові поля!");
-        return;
+        // Перевірка обов'язкових полів
+        if (!name || !email || !phone || !targetAudience || !language || !studentAge || !goal || !knowsLevel || !format) {
+          alert("Будь ласка, заповніть усі поля зі зірочкою (*)");
+          return;
+        }
+
+        if (knowsLevel === 'Так' && !level) {
+          alert("Будь ласка, оберіть ваш рівень мови!");
+          return;
+        }
+
+        const formData = {
+          name: name,
+          email: email,
+          phone: phone,
+          targetAudience: targetAudience,
+          language: language,
+          studentAge: studentAge,
+          goal: goal,
+          knowsLevel: knowsLevel,
+          level: knowsLevel === 'Так' ? level : 'Потрібен тест',
+          format: format
+        };
+
+        // Перевіряємо чи доступний Telegram WebApp SDK
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) {
+          window.Telegram.WebApp.sendData(JSON.stringify(formData));
+        } else {
+          alert("Увага: Форму відкрито як звичайне посилання, а не через Inline-кнопку Mini App в Telegram! Telegram дозволяє відправку даних лише через WebApp-кнопку.");
+        }
+      } catch (err) {
+        alert("Помилка відправки: " + err.message);
       }
-
-      if (knowsLevel === 'Так' && !level) {
-        alert("Будь ласка, вкажіть ваш рівень мови!");
-        return;
-      }
-
-      // Формуємо об'єкт із відповідями
-      const formData = {
-        name: name,
-        email: email,
-        phone: phone,
-        targetAudience: targetAudience,
-        language: language,
-        studentAge: studentAge,
-        goal: goal,
-        knowsLevel: knowsLevel,
-        level: knowsLevel === 'Так' ? level : 'Потрібен тест',
-        format: format
-      };
-
-      // Надсилаємо JSON назад у Telegram
-      tg.sendData(JSON.stringify(formData));
     }
   </script>
 </body>
