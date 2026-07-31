@@ -213,10 +213,7 @@
       tg.expand();
     }
 
-    // ⚠️ ВАЖЛИВО: Замініть цей URL на Production URL з вашої ноди Webhook у n8n
-    const WEBHOOK_URL = 'https://rehydrate-expenses-issuing.ngrok-free.dev/webhook/uspeak-form';
-    
-    // ⚠️ ВАЖЛИВО: Секретний ключ для захисту від спаму (має збігатися з ключем в n8n)
+    const WEBHOOK_URL = 'https://rehydrate-expenses-issuing.ngrok-free.dev/webhook-test/uspeak-form';
     const SECRET_KEY = 'USpeak_Secret_Key_1296_s66';
 
     function toggleLevelSelect() {
@@ -233,9 +230,14 @@
 
     async function sendData() {
       try {
-        const name = document.getElementById('name').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const phone = document.getElementById('phone').value.trim();
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
+        const phone = phoneInput.value.trim();
+
         const targetAudience = document.getElementById('targetAudience').value;
         const language = document.getElementById('language').value;
         const studentAge = document.getElementById('studentAge').value;
@@ -244,18 +246,35 @@
         const level = document.getElementById('level').value;
         const format = document.getElementById('format').value;
 
-        // Перевірка заповнення обов'язкових полів
+        // 1. Перевірка заповнення усіх обов'язкових полів
         if (!name || !email || !phone || !targetAudience || !language || !studentAge || !goal || !knowsLevel || !format) {
           alert("Будь ласка, заповніть усі поля зі зірочкою (*)");
           return;
         }
 
+        // 2. ВАЛІДАЦІЯ EMAIL
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          alert("Будь ласка, вкажіть коректну електронну пошту (наприклад: name@gmail.com)");
+          emailInput.focus();
+          return;
+        }
+
+        // 3. ВАЛІДАЦІЯ ТЕЛЕФОНУ (Обов'язковий "+" та від 10 до 14 цифр)
+        const phoneRegex = /^\+[0-9]{10,14}$/;
+        if (!phoneRegex.test(phone)) {
+          alert("Номер телефону має починатися з '+' та містити від 10 до 14 цифр (наприклад: +380971234567)");
+          phoneInput.focus();
+          return;
+        }
+
+        // 4. Перевірка вибору рівня
         if (knowsLevel === 'Так' && !level) {
           alert("Будь ласка, оберіть ваш рівень мови!");
           return;
         }
 
-        // Збір даних анкетного пакета
+        // Формування об'єкта даних
         const formData = {
           telegram_user_id: tg?.initDataUnsafe?.user?.id || null,
           telegram_username: tg?.initDataUnsafe?.user?.username || '',
@@ -271,7 +290,7 @@
           format: format
         };
 
-        // Захищена відправка на Webhook в n8n
+        // За запитом на Webhook в n8n
         const response = await fetch(WEBHOOK_URL, {
           method: 'POST',
           headers: { 
@@ -284,7 +303,7 @@
         if (response.ok) {
           alert("Дякуємо! Анкету успішно відправлено.");
           if (tg && typeof tg.close === 'function') {
-            tg.close(); // Закриваємо вікно Telegram WebApp
+            tg.close();
           }
         } else {
           alert("Помилка під час збереження даних. Перевірте з'єднання.");
